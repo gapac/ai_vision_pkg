@@ -1,7 +1,6 @@
 # image_publisher/image_publisher.py
 
 import os
-import sys
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -10,21 +9,31 @@ import cv2
 import numpy as np
 
 class ImagePublisher(Node):
-    def __init__(self, image_dir, apply_transform=False):
+    def __init__(self):
         super().__init__('image_publisher')
         self.publisher_ = self.create_publisher(Image, 'image_topic', 10)
         self.bridge = CvBridge()
-        self.image_dir = image_dir
-        self.image_paths = self.load_images(image_dir)
-        self.index = 0
-        self.apply_transform = apply_transform
 
-        # Set the timer at 30 Hz (1/30 seconds per frame)
-        self.timer = self.create_timer(1.0 / 30, self.timer_callback)
+        # Declare and read parameters
+        self.declare_parameter('image_folder', '')
+        self.declare_parameter('apply_transform', False)
+
+        self.image_dir = self.get_parameter('image_folder').get_parameter_value().string_value
+        self.apply_transform = self.get_parameter('apply_transform').get_parameter_value().bool_value
+
+        if not os.path.isdir(self.image_dir):
+            self.get_logger().error(f"The directory '{self.image_dir}' does not exist.")
+            return
+
+        self.image_paths = self.load_images(self.image_dir)
+        self.index = 0
 
         if self.apply_transform:
             # Define the transformation matrix based on the provided rotation and translation
             self.transformation_matrix = self.get_transformation_matrix()
+
+        # Set the timer at 30 Hz (1/30 seconds per frame)
+        self.timer = self.create_timer(1.0 / 30, self.timer_callback)
 
     def load_images(self, image_dir):
         image_extensions = {'.jpg', '.jpeg', '.png', '.bmp'}
@@ -93,22 +102,9 @@ class ImagePublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
-    if len(sys.argv) < 2:
-        print("Usage: ros2 run image_publisher image_publisher <image_directory> [--transform]")
-        return
-
-    image_directory = sys.argv[1]
-    if not os.path.isdir(image_directory):
-        print(f"The directory {image_directory} does not exist.")
-        return
-
-    # Check for optional --transform flag
-    apply_transform = '--transform' in sys.argv
-
-    image_publisher = ImagePublisher(image_directory, apply_transform)
-
-    rclpy.spin(image_publisher)
+    image_publisher = ImagePublisher()
+    if image_publisher.image_dir:  # Only spin if the directory is valid
+        rclpy.spin(image_publisher)
 
     image_publisher.destroy_node()
     rclpy.shutdown()

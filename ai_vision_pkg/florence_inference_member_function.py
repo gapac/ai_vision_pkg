@@ -19,6 +19,8 @@ class FlorenceInferenceNode(Node):
 
         # Initialize Florence model and processor
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = ("cpu")
+        
         self.get_logger().info(f"Using device: {self.device}")
 
         checkpoint = "microsoft/Florence-2-large-ft"
@@ -93,6 +95,18 @@ class FlorenceInferenceNode(Node):
                 self.get_logger().info("Annotated the image with detections.")
             except Exception as e:
                 self.get_logger().error(f"Error annotating image: {str(e)}")
+        
+        # #TODO add a caption to phrase grouding task       
+        # else if self.task == "<CTG>":
+        #     try:
+        #         detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
+        #         bounding_box_annotator = sv.BoundingBoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
+        #         label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
+        #         pil_image = bounding_box_annotator.annotate(pil_image, detections)
+        #         pil_image = label_annotator.annotate(pil_image, detections)
+        #         self.get_logger().info("Annotated the image with detections.")
+        #     except Exception as e:
+        #         self.get_logger().error(f"Error annotating image: {str(e)}")
 
         # Convert annotated PIL image back to ROS Image message
         try:
