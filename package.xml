@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ai_vision_pkg</name>
+  <version>0.0.0</version>
+  <description>Package that implements grounded AI vision tasks using SAM, Florence, GroudingDino...</description>
+  <maintainer email="gasper.jezernik001@gmail.com">gapac</maintainer>
+  <license>Apache-2.0</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  
+  <!-- dependencies for cv_bridge cv2 numpy-->
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+
+  <!-- Other dependencies installed through PyPI -->
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-torch</exec_depend>
+
+  <!-- Install with pip! <exec_depend>python3-pillow</exec_depend> -->
+  <!-- Install with pip! <exec_depend>python3-transformers</exec_depend> -->
+  <!-- Install with pip! <exec_depend>python3-supervision</exec_depend> -->
+
+  <!-- Required to automatically install dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
