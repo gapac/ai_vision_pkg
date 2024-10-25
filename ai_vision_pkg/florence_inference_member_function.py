@@ -11,6 +11,7 @@ import numpy as np
 import supervision as sv
 from io import BytesIO
 
+
 class ObjectDetectionNode(Node):
     def __init__(self):
         super().__init__('object_detection_node')
