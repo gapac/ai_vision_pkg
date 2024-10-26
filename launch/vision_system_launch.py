@@ -7,20 +7,20 @@ from launch.substitutions import PathJoinSubstitution, TextSubstitution
 
 def generate_launch_description():
     # Paths and other configurations
-    image_folder_path = '/home/g22/Pictures/data_rv_testni_podatki_3/png'
+    image_folder_path = '/home/g22/Pictures/data_rv_ovire_na_tleh/png'
     usb_cam_config_file = '/home/g22/GitHub/ros2_package_testing_ws/src/usb_cam/config/params_custom1.yaml'
 
     return LaunchDescription([
-        # Include the inference launch file from ai_vision_pkg
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare('ai_vision_pkg'),
-                    'launch',
-                    'florence_inference_launch.py'
-                ])
-            ])
-        ),
+        # # Include the inference launch file from ai_vision_pkg
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([
+        #         PathJoinSubstitution([
+        #             FindPackageShare('ai_vision_pkg'),
+        #             'launch',
+        #             'florence_inference_launch.py'
+        #         ])
+        #     ])
+        # ),
 
         # Launch the image_publisher node with image folder as a parameter
         Node(
