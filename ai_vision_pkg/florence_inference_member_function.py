@@ -7,6 +7,10 @@ from PIL import Image as PILImage
 import torch
 from transformers import AutoModelForCausalLM, AutoProcessor
 import supervision as sv
+from cv2 import cvtColor, COLOR_BGR2RGB
+from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray, Pose2D
+from std_msgs.msg import String
+
 
 class FlorenceInferenceNode(Node):
     def __init__(self):
@@ -37,7 +41,9 @@ class FlorenceInferenceNode(Node):
 
         # Set up subscribers and publishers
         self.subscription = self.create_subscription(Image, '/image_topic', self.image_callback, 10)
-        self.publisher_ = self.create_publisher(Image, '/florence/annotated_image', 10)
+        self.publisher_ant = self.create_publisher(Image, '/florence/annotated_image', 10)
+        self.publisher_src = self.create_publisher(Image, '/florence/source_image', 10)
+        self.bbox_publisher = self.create_publisher(BoundingBox2DArray, '/florence/bounding_boxes', 10)
         self.bridge = CvBridge()
         self.get_logger().info("Initialized subscribers and publishers.")
     
@@ -58,23 +64,48 @@ class FlorenceInferenceNode(Node):
             self.get_logger().error(f"Error running inference: {str(e)}")
             return response
 
+        # Add this helper function to create BoundingBox2D messages
+
+    def create_bounding_box_msg(self, detections, image_size):
+        bbox_array_msg = BoundingBox2DArray()
+        # Iterate through each bounding box in the xyxy array
+        for bbox_coordinates in detections.xyxy:
+            self.get_logger().info(f"Bounding box coordinates: {bbox_coordinates}")
+            x_min, y_min, x_max, y_max = bbox_coordinates  # Unpack the coordinates
+            self.get_logger().info(f"Bounding box coordinates: {x_min}, {y_min}, {x_max}, {y_max}")
+            # Create a BoundingBox2D message
+            bbox = BoundingBox2D()
+            pose = Pose2D()
+            pose.position.x = (x_min + x_max) / 2
+            pose.position.y = (y_min + y_max) / 2
+            bbox.center = pose
+            #convert to float
+            bbox.size_x = float(x_max - x_min)
+            bbox.size_y = float(y_max - y_min)
+            # Append the bounding box to the array message
+            self.get_logger().info(f"Bounding box message: {bbox}")
+            bbox_array_msg.boxes.append(bbox)
+            self.get_logger().info(f"Bounding box array message: {bbox_array_msg}")
+        return bbox_array_msg
+    
     def image_callback(self, msg):
         self.get_logger().info("Received an image")
         try:
-            # Convert ROS Image message to PIL image
+            # Convert ROS Image message to OpenCV image (BGR format)
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
             self.get_logger().info("Converted ROS Image to OpenCV format.")
         except Exception as e:
             self.get_logger().error(f"Error converting ROS Image to OpenCV: {str(e)}")
             return
-        # Prepare inputs for Florence model
         try:
-            pil_image = PILImage.fromarray(cv_image)
-            self.get_logger().info("Converted OpenCV image to PIL image.")
+            # Convert BGR (OpenCV format) to RGB (PIL format)
+            rgb_image = cvtColor(cv_image, COLOR_BGR2RGB)
+            # Convert the RGB image to a PIL image
+            pil_image = PILImage.fromarray(rgb_image)
+            self.get_logger().info("Converted OpenCV image to PIL image in RGB format.")
         except Exception as e:
             self.get_logger().error(f"Error converting OpenCV image to PIL: {str(e)}")
             return
-
 
         # Run object detection task
         if self.task == "<OD>":
@@ -82,33 +113,76 @@ class FlorenceInferenceNode(Node):
                 #run inference function
                 response = self.run_inference(pil_image,self.task)
                 detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
-                bounding_box_annotator = sv.BoundingBoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                bounding_box_annotator = sv.BoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
                 label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
                 pil_image = bounding_box_annotator.annotate(pil_image, detections)
                 pil_image = label_annotator.annotate(pil_image, detections)
                 self.get_logger().info("Annotated the image with detections.")
             except Exception as e:
-                self.get_logger().error(f"Error annotating image: {str(e)}")
+                self.get_logger().error(f"Error in <OD>: {str(e)}")
         
+        # caption to phrase grouding task       
+        elif self.task == "<CAPTION_TO_PHRASE_GROUNDING>":
+            try:
+                task = "<MORE_DETAILED_CAPTION>"
+                #task = "<DETAILED_CAPTION>"
+                #task = "<CAPTION>"
+                response = self.run_inference(image=pil_image, task=task)
+                text = response[task]
+
+                task = "<CAPTION_TO_PHRASE_GROUNDING>"
+                response = self.run_inference(image=pil_image, task=task, text=text)
+                detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
+                bounding_box_annotator = sv.BoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                pil_image = bounding_box_annotator.annotate(pil_image, detections)
+                pil_image = label_annotator.annotate(pil_image, detections)
+                self.get_logger().info("Annotated the image for CAPTION_TO_PHRASE_GROUNDING.")
+            except Exception as e:
+                self.get_logger().error(f"Error annotating image for CAPTION_TO_PHRASE_GROUNDING: {str(e)}")
         
-        # #TODO add a caption to phrase grouding task       
-        # else if self.task == "<CTG>":
-        #     try:
-        #         detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
-        #         bounding_box_annotator = sv.BoundingBoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
-        #         label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
-        #         pil_image = bounding_box_annotator.annotate(pil_image, detections)
-        #         pil_image = label_annotator.annotate(pil_image, detections)
-        #         self.get_logger().info("Annotated the image with detections.")
-        #     except Exception as e:
-        #         self.get_logger().error(f"Error annotating image: {str(e)}")
+        # caption to region proposal task     
+        elif self.task == "<REGION_PROPOSAL>":
+            try:
+                response = self.run_inference(image=pil_image, task=self.task, text=self.text)
+                detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
+                bounding_box_annotator = sv.BoxAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                pil_image = bounding_box_annotator.annotate(pil_image, detections)
+                pil_image = label_annotator.annotate(pil_image, detections)
+                self.get_logger().info("Annotated the image for REGION_PROPOSAL.")
+            except Exception as e:
+                self.get_logger().error(f"Error annotating image for REGION_PROPOSAL: {str(e)}")
+
+        # segmentation task     
+        elif self.task == "<REFERRING_EXPRESSION_SEGMENTATION>":
+            try:
+                response = self.run_inference(image=pil_image, task=self.task, text=self.text)
+                detections = sv.Detections.from_lmm(sv.LMM.FLORENCE_2, response, resolution_wh=pil_image.size)
+                mask_annotator = sv.MaskAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                label_annotator = sv.LabelAnnotator(color_lookup=sv.ColorLookup.INDEX)
+                pil_image = mask_annotator.annotate(pil_image, detections)
+                pil_image = label_annotator.annotate(pil_image, detections)
+                self.get_logger().info("Annotated the image for REFERRING_EXPRESSION_SEGMENTATION.")
+            except Exception as e:
+                self.get_logger().error(f"Error annotating image for REFERRING_EXPRESSION_SEGMENTATION: {str(e)}")
+        
+        # Publish bounding boxes
+        try:
+            self.get_logger().info(f"Detections: {detections}")
+            bbox_msg = self.create_bounding_box_msg(detections, pil_image.size)
+            self.bbox_publisher.publish(bbox_msg)
+            self.get_logger().info("Published bounding boxes.")
+        except Exception as e:
+            self.get_logger().error(f"Error publishing bounding boxes: {str(e)}")
 
         # Convert annotated PIL image back to ROS Image message
         try:
             annotated_cv_image = np.array(pil_image)
-            annotated_msg = self.bridge.cv2_to_imgmsg(annotated_cv_image, encoding="bgr8")
-            self.publisher_.publish(annotated_msg)
-            self.get_logger().info("Published annotated image.")
+            annotated_msg = self.bridge.cv2_to_imgmsg(annotated_cv_image, encoding="rgb8")
+            self.publisher_ant.publish(annotated_msg)
+            self.publisher_src.publish(msg)
+            self.get_logger().info("Published florence annotated, source image.")
         except Exception as e:
             self.get_logger().error(f"Error converting annotated image to ROS message: {str(e)}")
 

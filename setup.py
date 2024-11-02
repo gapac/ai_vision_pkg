@@ -28,6 +28,7 @@ setup(
             'listener = ai_vision_pkg.subscriber_member_function:main',
             'florence = ai_vision_pkg.florence_inference_member_function:main',
             'image_publisher = ai_vision_pkg.image_publisher:main',
+            'sam2 = ai_vision_pkg.sam2_inference:main',
         ],
     },
 )
