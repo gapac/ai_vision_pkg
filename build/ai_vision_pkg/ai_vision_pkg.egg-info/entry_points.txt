@@ -1,0 +1,10 @@
+[console_scripts]
+florence = ai_vision_pkg.florence_inference_member_function:main
+image_publisher = ai_vision_pkg.image_publisher:main
+listener = ai_vision_pkg.subscriber_member_function:main
+llama_NIM = ai_vision_pkg.NIM_Llama:main
+sam2 = ai_vision_pkg.sam2_inference:main
+take_photo = ai_vision_pkg.take_photo:main
+talker = ai_vision_pkg.publisher_member_function:main
+vision_system = ai_vision_pkg.vision_system:main
+

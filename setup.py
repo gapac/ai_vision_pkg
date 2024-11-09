@@ -13,7 +13,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         # Include all launch files.
-        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*')))
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))),
+        (os.path.join('share', package_name, 'srv'), glob('srv/*.srv')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,11 +25,15 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'service = py_srvcli.service_member_function:main',
             'talker = ai_vision_pkg.publisher_member_function:main',
             'listener = ai_vision_pkg.subscriber_member_function:main',
             'florence = ai_vision_pkg.florence_inference_member_function:main',
             'image_publisher = ai_vision_pkg.image_publisher:main',
             'sam2 = ai_vision_pkg.sam2_inference:main',
+            'take_photo = ai_vision_pkg.take_photo:main',
+            'vision_system = ai_vision_pkg.vision_system:main',
+            'llama_NIM = ai_vision_pkg.NIM_Llama:main',
         ],
     },
 )

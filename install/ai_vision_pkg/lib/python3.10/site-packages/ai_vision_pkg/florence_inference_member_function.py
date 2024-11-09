@@ -11,7 +11,7 @@ from cv2 import cvtColor, COLOR_BGR2RGB
 from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray, Pose2D
 from std_msgs.msg import String
 import spacy
-
+from ai_vision_pkg.srv import LlamaService
 
 
 class FlorenceInferenceNode(Node):
@@ -41,24 +41,19 @@ class FlorenceInferenceNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error loading model or processor: {str(e)}")
 
+        # Initialize LLama service client
+        self.llama_client = self.create_client(LlamaService, 'llama_service')
+        while not self.llama_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('LLama service not available, waiting again...')
+
         # Set up subscribers and publishers
         self.subscription = self.create_subscription(Image, '/image_topic', self.image_callback, 10)
         self.publisher_ant = self.create_publisher(Image, '/florence/annotated_image', 10)
         self.publisher_src = self.create_publisher(Image, '/florence/source_image', 10)
         self.bbox_publisher = self.create_publisher(BoundingBox2DArray, '/florence/bounding_boxes', 10)
         self.label_publisher = self.create_publisher(String, '/florence/labels', 10)
-        self.ontology_subscriber = self.create_subscription(String, '/llama/ontology', self.ontology_callback, 10)
         self.bridge = CvBridge()
         self.get_logger().info("Initialized subscribers and publishers.")
-        
-        # Initialize ontology subscriber
-        self.ontology_subscriber = self.create_subscription(String, '/llama/ontology', self.ontology_callback, 10)
-        self.ontology_data = None
-        self.get_logger().info("Initialized ontology subscriber.")
-        
-        # Initialize paragraph publisher
-        self.paragraph_publisher = self.create_publisher(String, '/florence/paragraph', 10)
-        self.get_logger().info("Initialized paragraph publisher.")
     
 
     def run_inference(self, image: PILImage, task: str, text: str = ""):
@@ -201,9 +196,20 @@ class FlorenceInferenceNode(Node):
             self.get_logger().error(f"Error annotating image for DENSE_REGION_CAPTION: {str(e)}")
             return None, pil_image
 
-    def ontology_callback(self, msg):
-        self.ontology_data = msg.data
-        self.get_logger().info(f"Received ontology data: {self.ontology_data}")
+    def call_llama_service(self, paragraph):
+        try:
+            request = LlamaService.Request()
+            request.paragraph = paragraph
+            future = self.llama_client.call_async(request)
+            rclpy.spin_until_future_complete(self, future)
+            if future.result() is not None:
+                return future.result().objects
+            else:
+                self.get_logger().error('LLama service call failed')
+                return []
+        except Exception as e:
+            self.get_logger().error(f"Error calling LLama service: {str(e)}")
+            return []
 
     def image_callback(self, msg):
         self.get_logger().info("Received an image")
@@ -223,6 +229,7 @@ class FlorenceInferenceNode(Node):
         except Exception as e:
             self.get_logger().error(f"Error converting OpenCV image to PIL: {str(e)}")
             return
+
 
         detections = None
         if self.task == "<OD>":
@@ -256,17 +263,11 @@ class FlorenceInferenceNode(Node):
         
         elif self.task == "<CUSTOM_CAPTION_ONTOLOGY_PHRASE_GROUNDING>":
             paragraph, pil_image = self.handle_caption(pil_image, task="<MORE_DETAILED_CAPTION>")
-            # Publish paragraph
-            paragraph_msg = String()
-            paragraph_msg.data = paragraph
-            self.paragraph_publisher.publish(paragraph_msg)
-            self.get_logger().info(f"Published paragraph: {paragraph_msg.data}")
-            
-            # Use ontology data
-            if self.ontology_data:
-                text = self.ontology_data
-                self.get_logger().info(f"Objects from ontology data: {text}")
-                detections, pil_image = self.handle_caption_to_phrase_grounding(pil_image, text=text)
+            # Service call that sends paragraph to LLama that returns a list of objects
+            objects = self.call_llama_service(paragraph)
+            text = ', '.join(objects)
+            self.get_logger().info(f"Objects from LLama service: {text}")
+            detections, pil_image = self.handle_caption_to_phrase_grounding(pil_image, text=text)
 
         if detections:
             try:

@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: ai-vision-pkg
+Version: 0.0.0
+Summary: Package that implements grounded AI vision tasks using SAM, Florence, GroudingDino...
+Home-page: UNKNOWN
+Maintainer: gapac
+Maintainer-email: gasper.jezernik001@gmail.com
+License: Apache-2.0
+Platform: UNKNOWN
+License-File: LICENSE
+
+UNKNOWN
+

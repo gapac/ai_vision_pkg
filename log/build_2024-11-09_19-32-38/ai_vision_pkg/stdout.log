@@ -1,0 +1,68 @@
+running egg_info
+creating build/ai_vision_pkg/ai_vision_pkg.egg-info
+writing build/ai_vision_pkg/ai_vision_pkg.egg-info/PKG-INFO
+writing dependency_links to build/ai_vision_pkg/ai_vision_pkg.egg-info/dependency_links.txt
+writing entry points to build/ai_vision_pkg/ai_vision_pkg.egg-info/entry_points.txt
+writing requirements to build/ai_vision_pkg/ai_vision_pkg.egg-info/requires.txt
+writing top-level names to build/ai_vision_pkg/ai_vision_pkg.egg-info/top_level.txt
+writing manifest file 'build/ai_vision_pkg/ai_vision_pkg.egg-info/SOURCES.txt'
+reading manifest file 'build/ai_vision_pkg/ai_vision_pkg.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'build/ai_vision_pkg/ai_vision_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/publisher_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/take_photo.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/__init__.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/sam2_inference.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/florence_inference_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/NIM_Llama.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/subscriber_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+copying ai_vision_pkg/image_publisher.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg
+running install
+running install_lib
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/publisher_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/take_photo.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/__init__.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/sam2_inference.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/florence_inference_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/NIM_Llama.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/subscriber_member_function.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+copying /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/build/lib/ai_vision_pkg/image_publisher.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/take_photo.py to take_photo.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/sam2_inference.py to sam2_inference.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/florence_inference_member_function.py to florence_inference_member_function.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/NIM_Llama.py to NIM_Llama.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/subscriber_member_function.py to subscriber_member_function.cpython-310.pyc
+byte-compiling /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg/image_publisher.py to image_publisher.cpython-310.pyc
+running install_data
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ament_index
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ament_index/resource_index
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ament_index/resource_index/packages
+copying resource/ai_vision_pkg -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ament_index/resource_index/packages
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg
+copying package.xml -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg/launch
+copying launch/florence_inference_launch.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg/launch
+copying launch/vision_system_launch.py -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg/launch
+creating /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg/srv
+copying srv/LlamaService.srv -> /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/share/ai_vision_pkg/srv
+running install_egg_info
+Copying build/ai_vision_pkg/ai_vision_pkg.egg-info to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/python3.10/site-packages/ai_vision_pkg-0.0.0-py3.10.egg-info
+running install_scripts
+Installing florence script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing image_publisher script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing listener script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing llama_NIM script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing sam2 script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing take_photo script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing talker script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+Installing vision_system script to /home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/install/ai_vision_pkg/lib/ai_vision_pkg
+writing list of installed files to '/home/g22/GitHub/ros2_package_testing_ws/src/ai_vision_pkg/build/ai_vision_pkg/install.log'
