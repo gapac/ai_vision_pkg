@@ -11,7 +11,7 @@ from cv2 import cvtColor, COLOR_BGR2RGB
 from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray, Pose2D
 from std_msgs.msg import String
 import spacy
-
+import message_filters
 
 
 class FlorenceInferenceNode(Node):
@@ -28,6 +28,11 @@ class FlorenceInferenceNode(Node):
         self.text = self.get_parameter('text').get_parameter_value().string_value
         self.get_logger().info(f"Text parameter set to: {self.text}")
 
+        # Add parameter image_topic
+        self.declare_parameter('image_topic', '/image_topic')
+        self.image_topic = self.get_parameter('image_topic').get_parameter_value().string_value
+        self.get_logger().info(f"Image topic set to: {self.image_topic}")
+
         # Initialize Florence model and processor
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.device = ("cpu")
@@ -42,7 +47,11 @@ class FlorenceInferenceNode(Node):
             self.get_logger().error(f"Error loading model or processor: {str(e)}")
 
         # Set up subscribers and publishers
-        self.subscription = self.create_subscription(Image, '/image_topic', self.image_callback, 10)
+        self.image_sub = message_filters.Subscriber(self, Image, self.image_topic)
+        self.depth_sub = message_filters.Subscriber(self, Image, '/camera/camera/aligned_depth_to_color/image_raw')
+        self.ts = message_filters.ApproximateTimeSynchronizer([self.image_sub, self.depth_sub], 10, 0.1)
+        self.ts.registerCallback(self.sync_callback)
+
         self.publisher_ant = self.create_publisher(Image, '/florence/annotated_image', 10)
         self.publisher_src = self.create_publisher(Image, '/florence/source_image', 10)
         self.bbox_publisher = self.create_publisher(BoundingBox2DArray, '/florence/bounding_boxes', 10)
@@ -59,6 +68,10 @@ class FlorenceInferenceNode(Node):
         # Initialize paragraph publisher
         self.paragraph_publisher = self.create_publisher(String, '/florence/paragraph', 10)
         self.get_logger().info("Initialized paragraph publisher.")
+
+        # Initialize depth publisher
+        self.depth_publisher = self.create_publisher(Image, '/florence/depth_image', 10)
+        self.get_logger().info("Initialized depth publisher.")
     
 
     def run_inference(self, image: PILImage, task: str, text: str = ""):
@@ -115,9 +128,9 @@ class FlorenceInferenceNode(Node):
             self.get_logger().error(f"Error in <OD>: {str(e)}")
             return None, pil_image
 
-    def handle_caption_to_phrase_grounding(self, pil_image, text="<MORE_DETAILEDCAPTION>"):
+    def handle_caption_to_phrase_grounding(self, pil_image, text="<MORE_DETAILED_CAPTION>"):
         try:
-            if text == "<MORE_DETAILEDCAPTION>":
+            if text == "<MORE_DETAILED_CAPTION>":
                 response = self.run_inference(image=pil_image, task=text)
                 paragraph = response[task]
                 self.get_logger().info(f"Extracted paragraph: {paragraph}")
@@ -205,11 +218,11 @@ class FlorenceInferenceNode(Node):
         self.ontology_data = msg.data
         self.get_logger().info(f"Received ontology data: {self.ontology_data}")
 
-    def image_callback(self, msg):
-        self.get_logger().info("Received an image")
+    def sync_callback(self, image_msg, depth_msg):
+        self.get_logger().info("Received synchronized image and depth messages")
         try:
             # Convert ROS Image message to OpenCV image (BGR format)
-            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            cv_image = self.bridge.imgmsg_to_cv2(image_msg, "bgr8")
             self.get_logger().info("Converted ROS Image to OpenCV format.")
         except Exception as e:
             self.get_logger().error(f"Error converting ROS Image to OpenCV: {str(e)}")
@@ -254,6 +267,9 @@ class FlorenceInferenceNode(Node):
             self.get_logger().info(f"Extracted and combined objects: {text}")
             detections, pil_image = self.handle_caption_to_phrase_grounding(pil_image, text=text)
         
+        elif self.task == "<CUSTOM_PROMPT_PHRASE_GROUNDING>":
+            self.get_logger().info(f"Objects from custom prompt: {self.text}")
+            detections, pil_image = self.handle_caption_to_phrase_grounding(pil_image, text=self.text)
         elif self.task == "<CUSTOM_CAPTION_ONTOLOGY_PHRASE_GROUNDING>":
             paragraph, pil_image = self.handle_caption(pil_image, task="<MORE_DETAILED_CAPTION>")
             # Publish paragraph
@@ -289,8 +305,9 @@ class FlorenceInferenceNode(Node):
             annotated_cv_image = np.array(pil_image)
             annotated_msg = self.bridge.cv2_to_imgmsg(annotated_cv_image, encoding="rgb8")
             self.publisher_ant.publish(annotated_msg)
-            self.publisher_src.publish(msg)
-            self.get_logger().info("Published florence annotated, source image.")
+            self.publisher_src.publish(image_msg)
+            self.depth_publisher.publish(depth_msg)
+            self.get_logger().info("Published florence annotated, source, and depth images.")
         except Exception as e:
             self.get_logger().error(f"Error converting annotated image to ROS message: {str(e)}")
 
