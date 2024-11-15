@@ -22,17 +22,17 @@ def generate_launch_description():
         #     ])
         # ),
 
-        # Launch the image_publisher node with image folder as a parameter
-        Node(
-            package='ai_vision_pkg',
-            executable='image_publisher',
-            name='image_publisher_node',
-            output='screen',
-            parameters=[{
-                'image_folder': image_folder_path,
-                'apply_transform': False  # Set to True if you want to apply the transformation
-            }]
-        ),
+        # # Launch the image_publisher node with image folder as a parameter
+        # Node(
+        #     package='ai_vision_pkg',
+        #     executable='image_publisher',
+        #     name='image_publisher_node',
+        #     output='screen',
+        #     parameters=[{
+        #         'image_folder': image_folder_path,
+        #         'apply_transform': False  # Set to True if you want to apply the transformation
+        #     }]
+        # ),
 
         # Launch the RViz2 node
         Node(
@@ -42,14 +42,14 @@ def generate_launch_description():
             output='screen',
         ),
 
-        # Launch the usb_cam node with a parameter file
-        Node(
-            package='usb_cam',
-            executable='usb_cam_node_exe',
-            name='usb_cam_node',
-            output='screen',
-            parameters=[usb_cam_config_file],
-        ),
+        # # Launch the usb_cam node with a parameter file
+        # Node(
+        #     package='usb_cam',
+        #     executable='usb_cam_node_exe',
+        #     name='usb_cam_node',
+        #     output='screen',
+        #     parameters=[usb_cam_config_file],
+        # ),
 
         # Include the realsense2 camera launch file with custom parameters
         IncludeLaunchDescription(
@@ -63,7 +63,11 @@ def generate_launch_description():
             launch_arguments={
                 'depth_module.depth_profile': '1280x720x30',
                 'pointcloud.enable': 'true',
-                'align_depth.enable' : 'true'
+                'align_depth.enable' : 'true',
+                'color_fps': '10',
+                'depth_fps': '10',
+
+
             
             }.items()
         ),

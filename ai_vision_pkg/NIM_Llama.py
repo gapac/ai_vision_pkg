@@ -112,3 +112,122 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+
+
+
+# [llama_NIM-2] [INFO] [1731408612.903974329] [nim_llama]: Received paragraph: A man is standing in a white room. He is wearing a short sleeve shirt and pants. There is a white table in front of him with a black computer monitor on it. There are shelves on the wall behind the man. 
+# [florence-1] [INFO] [1731408612.907801051] [florence]: Received ontology data: Here are the new entries to the ontology:
+# [florence-1] 
+# [florence-1] "objects": [
+# [florence-1]     {
+# [florence-1]         "name": "man",
+# [florence-1]         "properties": {
+# [florence-1]             "wearing": "short sleeve shirt and gray pants",
+# [florence-1]             "location": "white room"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "in front of",
+# [florence-1]                 "target": "table"
+# [florence-1]             },
+# [florence-1]             {
+# [florence-1]                 "type": "behind",
+# [florence-1]                 "target": "shelves"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "table",
+# [florence-1]         "properties": {
+# [florence-1]             "color": "white",
+# [florence-1]             "has on it": "black computer monitor"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "in front of",
+# [florence-1]                 "target": "man"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "computer monitor",
+# [florence-1]         "properties": {
+# [florence-1]             "color": "black",
+# [florence-1]             "location": "on table"
+# [florence-1]         },
+# [florence-1]         "relationships": []
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "shelves",
+# [florence-1]         "properties": {
+# [florence-1]             "location": "on wall behind man"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "behind",
+# [florence-1]                 "target": "man"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "shirt",
+# [florence-1]         "properties": {
+# [florence-1]             "type": "short sleeve"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "worn by",
+# [florence-1]                 "target": "man"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "pants",
+# [florence-1]         "properties": {
+# [florence-1]             "color": "gray"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "worn by",
+# [florence-1]                 "target": "man"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     },
+# [florence-1]     {
+# [florence-1]         "name": "room",
+# [florence-1]         "properties": {
+# [florence-1]             "color": "white"
+# [florence-1]         },
+# [florence-1]         "relationships": [
+# [florence-1]             {
+# [florence-1]                 "type": "contains",
+# [florence-1]                 "target": "man"
+# [florence-1]             },
+# [florence-1]             {
+# [florence-1]                 "type": "contains",
+# [florence-1]                 "target": "table"
+# [florence-1]             },
+# [florence-1]             {
+# [florence-1]                 "type": "contains",
+# [florence-1]                 "target": "shelves"
+# [florence-1]             }
+# [florence-1]         ]
+# [florence-1]     }
+# [florence-1] ]
+# [florence-1] [INFO] [1731408613.185142520] [florence]: Published paragraph: A man is standing in a white room. He is wearing a short sleeve shirt and pants. There is a white table in front of him with a black computer monitor on it. There are shelves on the wall behind the man. 
+# [llama_NIM-2] [INFO] [1731408615.885817946] [nim_llama]: Published ontology data: Here are the new entries to the ontology:
+# [llama_NIM-2] 
+# [llama_NIM-2] "objects": [
+# [llama_NIM-2]     {
+# [llama_NIM-2]         "name": "wall",
+# [llama_NIM-2]         "properties": {
+# [llama_NIM-2]             "has on it": "shelves"
+# [llama_NIM-2]         },
+# [llama_NIM-2]         "relationships": [
+# [llama_NIM-2]             {
+# [llama_NIM-2]                 "type": "behind",
+# [llama_NIM-2]                 "target": "man"
+# [llama_NIM-2]             }
+# [llama_NIM-2]         ]
+# [llama_NIM-2]     }

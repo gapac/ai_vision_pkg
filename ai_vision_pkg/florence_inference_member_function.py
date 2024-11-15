@@ -132,7 +132,7 @@ class FlorenceInferenceNode(Node):
         try:
             if text == "<MORE_DETAILED_CAPTION>":
                 response = self.run_inference(image=pil_image, task=text)
-                paragraph = response[task]
+                paragraph = response[text]
                 self.get_logger().info(f"Extracted paragraph: {paragraph}")
                 text = paragraph
                 # import spacy
@@ -322,6 +322,7 @@ def main(args=None):
         node.destroy_node()
         rclpy.shutdown()
         node.get_logger().info("Node destroyed and shutdown complete.")
+
 
 if __name__ == '__main__':
     main()

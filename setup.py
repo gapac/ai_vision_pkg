@@ -32,6 +32,7 @@ setup(
             'image_publisher = ai_vision_pkg.image_publisher:main',
             'sam2 = ai_vision_pkg.sam2_inference:main',
             'take_photo = ai_vision_pkg.take_photo:main',
+            'save_pointcloud = ai_vision_pkg.save_pointcloud:main',
             'vision_system = ai_vision_pkg.vision_system:main',
             'llama_NIM = ai_vision_pkg.NIM_Llama:main',
         ],

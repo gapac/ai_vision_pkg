@@ -13,11 +13,15 @@ def generate_launch_description():
         Node(
             package='ai_vision_pkg',
             executable='florence',
-            name='florence',
-            parameters=[{
-                'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
-                'text': 'computer mouse',
-                'image_topic': LaunchConfiguration('image_topic')
+            name='florence_fast',
+            # parameters=[{
+            #     'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
+            #     'text': 'computer mouse',
+            #     'image_topic': LaunchConfiguration('image_topic')
+
+            # }]
+            parameters=[{'task': '<CAPTION_TO_PHRASE_GROUNDING>',
+                         'image_topic': LaunchConfiguration('image_topic')}]
 
             #TODO add the image topic parameter to all
             #parameters=[{'task': '<REFERRING_EXPRESSION_SEGMENTATION>', 'text': 'box'}]
@@ -28,6 +32,6 @@ def generate_launch_description():
             #parameters=[{'task': '<OD>'}]
             #parameters=[{'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>', 'text': 'human', 'image_topic': '/image_topic'}]
             
-            }]
+            
         ),
     ])

@@ -10,14 +10,18 @@ def generate_launch_description():
             default_value='/camera/camera/color/image_raw',
             description='Topic to subscribe to for images'
         ),
+
         Node(
             package='ai_vision_pkg',
             executable='florence',
             name='florence',
-            parameters=[{
-                'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
-                'text': 'computer mouse',
-                'image_topic': LaunchConfiguration('image_topic')
+            # parameters=[{
+            #     'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
+            #     'text': 'computer mouse',
+            #     'image_topic': LaunchConfiguration('image_topic')
+            # }]
+            parameters=[{'task': '<CUSTOM_CAPTION_ONTOLOGY_PHRASE_GROUNDING>',
+                         'image_topic': LaunchConfiguration('image_topic')}]
 
             #TODO add the image topic parameter to all
             #parameters=[{'task': '<REFERRING_EXPRESSION_SEGMENTATION>', 'text': 'box'}]
@@ -26,8 +30,15 @@ def generate_launch_description():
             #parameters=[{'task': '<CUSTOM_CAPTION_ONTOLOGY_PHRASE_GROUNDING>'}]
             #parameters=[{'task': '<REGION_PROPOSAL>'}]
             #parameters=[{'task': '<OD>'}]
-            #parameters=[{'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>', 'text': 'human', 'image_topic': '/image_topic'}]
-            
+            #parameters=[{'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>', 'text': 'human', 'image_topic': '/image_topic'}] 
+        ),
+
+        Node(
+            package='ai_vision_pkg',
+            executable='llama_NIM',
+            name='nim_llama',
+            parameters=[{
+                'image_topic': LaunchConfiguration('image_topic')
             }]
         ),
     ])

@@ -31,6 +31,7 @@ class SAM2InferenceNode(Node):
         self.ts.registerCallback(self.sync_callback)
 
         self.publisher_ = self.create_publisher(Image, '/SAM2/segmented_image', 10)
+        self.src_publisher_ = self.create_publisher(Image, '/SAM2/source_image', 10)
         self.depth_publisher_ = self.create_publisher(Image, '/SAM2/segmented_depth', 10)
         self.bridge = CvBridge()
         self.bounding_boxes = []  # Initialize bounding_boxes attribute
@@ -44,8 +45,8 @@ class SAM2InferenceNode(Node):
                 torch.backends.cudnn.allow_tf32 = True
             self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
             #self.DEVICE = torch.device('cpu')
-            self.CHECKPOINT = "/home/g22/GitHub/sam2/checkpoints/sam2_hiera_tiny.pt"
-            self.CONFIG = "sam2_hiera_t.yaml"
+            self.CHECKPOINT = "/home/g22/GitHub/sam2/checkpoints/sam2_hiera_large.pt"
+            self.CONFIG = "sam2_hiera_l.yaml"
             self.sam2_model = build_sam2(self.CONFIG, self.CHECKPOINT, device=self.DEVICE, apply_postprocessing=False)
             # Load the state dictionary with strict=False to ignore unexpected keys
             state_dict = torch.load(self.CHECKPOINT, map_location=self.DEVICE)
@@ -126,12 +127,16 @@ class SAM2InferenceNode(Node):
             depth_image = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding='16UC1')
             self.get_logger().info('Converted ROS Depth Image message to OpenCV image')
 
-            # Apply the mask to the depth image
-            if self.masks.shape[0] == 1:
-                mask = self.masks[0]
-            else:
-                mask = self.masks
-            segmented_depth = np.where(mask, depth_image, 0).astype(np.uint16)
+            # Compress all masks into a single mask
+            masks = np.any(masks, axis=0)
+
+            # Apply masks to depth image
+            segmented_depth = depth_image.copy()
+            segmented_depth[~masks] = 0
+            
+            
+            # Log segmented_depth.shape, segmented_depth.dtype
+            self.get_logger().info(f"segmented_depth.shape: {segmented_depth.shape}, segmented_depth.dtype: {segmented_depth.dtype}")
             self.get_logger().info("Successfully segmented depth image.")
 
             # Convert annotated images back to ROS Image messages
@@ -141,6 +146,7 @@ class SAM2InferenceNode(Node):
                 segmented_depth_msg = self.bridge.cv2_to_imgmsg(segmented_depth, encoding="16UC1")
                 self.publisher_.publish(annotated_seg_msg)
                 self.depth_publisher_.publish(segmented_depth_msg)
+                self.src_publisher_.publish(image_msg)
                 self.get_logger().info("Published annotated and segmented depth images.")
             except Exception as e:
                 self.get_logger().error(f"Error converting annotated image to ROS message: {str(e)}")
