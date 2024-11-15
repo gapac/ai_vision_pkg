@@ -9,18 +9,27 @@ def generate_launch_description():
     # Paths and other configurations
     image_folder_path = '/home/g22/Pictures/data_rv_ovire_na_tleh/png'
     usb_cam_config_file = '/home/g22/GitHub/ros2_package_testing_ws/src/usb_cam/config/params_custom1.yaml'
+    rviz_config_file = './rviz_config/demonstracija.rviz'
 
     return LaunchDescription([
         # # Include the inference launch file from ai_vision_pkg
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource([
-        #         PathJoinSubstitution([
-        #             FindPackageShare('ai_vision_pkg'),
-        #             'launch',
-        #             'florence_inference_launch.py'
-        #         ])
-        #     ])
-        # ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                PathJoinSubstitution([
+                    FindPackageShare('ai_vision_pkg'),
+                    'launch',
+                    'florence_inference_launch.py'
+                ])
+            ])
+        ),
+
+        # SAM node
+        Node(
+            package='ai_vision_pkg',
+            executable='sam2',
+            name='sam2',
+            output='screen'
+        ),
 
         # # Launch the image_publisher node with image folder as a parameter
         # Node(
@@ -34,12 +43,13 @@ def generate_launch_description():
         #     }]
         # ),
 
-        # Launch the RViz2 node
+        # Launch the RViz2 node with a config file
         Node(
             package='rviz2',
             executable='rviz2',
             name='rviz2',
             output='screen',
+            arguments=['-d', rviz_config_file]
         ),
 
         # # Launch the usb_cam node with a parameter file
@@ -64,8 +74,8 @@ def generate_launch_description():
                 'depth_module.depth_profile': '1280x720x30',
                 'pointcloud.enable': 'true',
                 'align_depth.enable' : 'true',
-                'color_fps': '10',
-                'depth_fps': '10',
+                # 'color_fps': '10',
+                # 'depth_fps': '10',
 
 
             

@@ -45,8 +45,8 @@ class SAM2InferenceNode(Node):
                 torch.backends.cudnn.allow_tf32 = True
             self.DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
             #self.DEVICE = torch.device('cpu')
-            self.CHECKPOINT = "/home/g22/GitHub/sam2/checkpoints/sam2_hiera_large.pt"
-            self.CONFIG = "sam2_hiera_l.yaml"
+            self.CHECKPOINT = "./segment-anything-2/checkpoints/sam2_hiera_tiny.pt"
+            self.CONFIG = "sam2_hiera_t.yaml"
             self.sam2_model = build_sam2(self.CONFIG, self.CHECKPOINT, device=self.DEVICE, apply_postprocessing=False)
             # Load the state dictionary with strict=False to ignore unexpected keys
             state_dict = torch.load(self.CHECKPOINT, map_location=self.DEVICE)

@@ -35,7 +35,7 @@ class FlorenceInferenceNode(Node):
 
         # Initialize Florence model and processor
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.device = ("cpu")
+        #self.device = ("cpu")
         self.get_logger().info(f"Using device: {self.device}")
 
         checkpoint = "microsoft/Florence-2-base-ft"

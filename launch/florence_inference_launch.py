@@ -15,8 +15,15 @@ def generate_launch_description():
             executable='florence',
             name='florence',
             parameters=[{
-                'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
-                'text': 'computer mouse',
+                # 'task': '<CAPTION_TO_PHRASE_GROUNDING>',
+
+                # 'task': '<CUSTOM_PROMPT_PHRASE_GROUNDING>',
+                # 'text': 'computer mouse',
+
+                'task': '<OD>',
+
+
+
                 'image_topic': LaunchConfiguration('image_topic')
 
             #TODO add the image topic parameter to all
